@@ -1,11 +1,3 @@
-// $Id$
-// Author: artur   2018/01/30
-
-//_____________________________________________________________________________
-//
-// SpdCommonGeoMapper
-//_____________________________________________________________________________
-
 #include "FairGeoLoader.h"
 #include "FairGeoInterface.h" 
 #include "FairGeoMedia.h"
@@ -32,72 +24,307 @@ SpdCommonGeoMapper* SpdCommonGeoMapper::fInstance = 0;
 TGeoVolume*  SpdCommonGeoMapper::theMasterVolume  = 0;
 
 /*==================================================================*/
-/*==================================================================*/
-/*==================================================================*/
+/**
+ * @file SpdCommonGeoMapper.cpp
+ * @brief Implementation of the SpdCommonGeoMapper class.
+ */
 
+/**
+ * @brief Number of geometric sectors.
+ * 
+ * Number of sectors should be greater than 2 and less than 13.
+ */
 Int_t    SpdCommonGeoMapper::theNGeoSectors             = 8;     // > 2 and < 13
+
+/**
+ * @brief Clearance between sectors.
+ * 
+ * Clearance is specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSectorClearance         = 0.4;   // cm
 
 /*============================= PIPE ===============================*/
- 
+
+/**
+ * @brief Definition type for the pipe geometry.
+ * 
+ * Possible values: 1, 2, 3, 4.
+ */
 Int_t    SpdCommonGeoMapper::thePipeDefGeoType          = 5;           // : 1,2,3,4
-//TString  SpdCommonGeoMapper::thePipeMaterial1           = "beryllium"; // : 1,2,3,4
+
+/**
+ * @brief Material of the pipe (first layer).
+ * 
+ * Options: "beryllium" or "aluminium".
+ */
 TString  SpdCommonGeoMapper::thePipeMaterial1           = "aluminium"; // : 1,2,3,4
+
+/**
+ * @brief Material of the pipe (second layer).
+ * 
+ * Options: "aluminium" (default).
+ */
 TString  SpdCommonGeoMapper::thePipeMaterial2           = "aluminium"; // : 4
 
+/**
+ * @brief Outer radius of the pipe.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::thePipeOuterRadius         = 3.1;         // [cm]  : 1,2,3
+
+/**
+ * @brief Thickness of the pipe.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::thePipeThickness           = 0.1;         // [cm]  : 1,2,3
 
+/**
+ * @brief Length of the pipe (first segment).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::thePipeLength1             = 1400.;       // [cm]  : 1
-Double_t SpdCommonGeoMapper::thePipeLength2             = 1000.;       // [cm]  : 2
-Double_t SpdCommonGeoMapper::thePipeLength3             = 1000.;       // [cm]  : 3
 
+/**
+ * @brief Length of the pipe (second segment).
+ * 
+ * Specified in centimeters.
+ */
+Double_t SpdCommonGeoMapper::thePipeLength2             = 1000.;       // [cm]  : 2
+
+/**
+ * @brief Length of the pipe (third segment).
+ * 
+ * Specified in centimeters.
+ */
+Double_t SpdCommonGeoMapper::thePipeLength3             = 1000.;       // [cm]  : 3
 
 /*===================== INNER TRACKING SYSTEM ======================*/
 
+/**
+ * @brief Definition type for the inner tracking system geometry.
+ * 
+ * Possible value: 1.
+ */
 Int_t    SpdCommonGeoMapper::theItsDefGeoType           = 3;            // : 1
+
+/**
+ * @brief Base material of the inner tracking system.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theItsBaseMaterial         = "air";       
+
+/**
+ * @brief Material of the inner tracking system ladder.
+ * 
+ * Default: "silicon".
+ */
 TString  SpdCommonGeoMapper::theItsLadderMaterial       = "silicon";       
+
+/**
+ * @brief Material of the inner tracking system sensor.
+ * 
+ * Default: "silicon".
+ */
 TString  SpdCommonGeoMapper::theItsSensorMaterial       = "silicon";
+
+/**
+ * @brief Number of layers in the inner tracking system.
+ */
 Int_t    SpdCommonGeoMapper::theItsNLayers              = 5;      
+
+/**
+ * @brief Minimum radius of the inner tracking system.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theItsMinRadius            = 5.0;          // cm
+
+/**
+ * @brief Maximum radius of the inner tracking system.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theItsMaxRadius            = 26.5;          // cm
+
+/**
+ * @brief Maximum length of the inner tracking system.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theItsMaxLength            = 200.;         // cm
 
 /*===================== BEAM-BEAM COUNTER (BBC) ======================*/
 
+/**
+ * @brief Definition type for the beam-beam counter geometry.
+ * 
+ * Possible value: 1.
+ */
 Int_t    SpdCommonGeoMapper::theBbcDefGeoType           = 1;        
+
+/**
+ * @brief Base material of the beam-beam counter.
+ * 
+ * Options: "silicon" (default) or "air".
+ */
 TString  SpdCommonGeoMapper::theBbcBaseMaterial         = "silicon";  // "air"
+
+/**
+ * @brief Thickness of the beam-beam counter.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theBbcThickness            = 0.5; //2.;    // cm
+
+/**
+ * @brief Size of the beam-beam counter.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theBbcSize                 = 84.7;   // cm
+
+/**
+ * @brief Width of the beam-beam counter.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theBbcWidth                = 78.7;   // cm 
+
+/**
+ * @brief Minimum distance of the beam-beam counter.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theBbcMinDist              = 186.6; // cm
 
 /*===================== TIME-OF-FLIGHT SYSTEM (BARREL) ======================*/
     
+/**
+ * @brief Definition type for the time-of-flight barrel geometry.
+ * 
+ * Possible value: 1.
+ */
 Int_t    SpdCommonGeoMapper::theTofBDefGeoType          = 1;         
+
+/**
+ * @brief Base material of the time-of-flight barrel.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTofBBaseMaterial        = "air";     
+
+/**
+ * @brief Length of the time-of-flight barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTofBLength              = 371.2; // cm
+
+/**
+ * @brief Size of the time-of-flight barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTofBSize                = 112.0;  // cm
+
+/**
+ * @brief Width of the time-of-flight barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTofBWidth               = 18.7;   // cm
     
 /*===================== TIME-OF-FLIGHT SYSTEM (ENDCAPS) =====================*/
     
+/**
+ * @brief Definition type for the time-of-flight endcaps geometry.
+ * 
+ * Possible value: 1.
+ */
 Int_t    SpdCommonGeoMapper::theTofECDefGeoType         = 1;        
+ 
+/**
+ * @brief Base material of the time-of-flight endcaps.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTofECBaseMaterial       = "air";  
+
+/**
+ * @brief Thickness of the time-of-flight endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTofECThickness          = 6.; //28.;   // cm
+
+/**
+ * @brief Size of the time-of-flight endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTofECSize               = 89.2;  // cm
+
+/**
+ * @brief Width of the time-of-flight endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTofECWidth              = 74.2;  // cm 
+
+/**
+ * @brief Minimum distance of the time-of-flight endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTofECMinDist            = 194.0;  // cm
 
 /*===================== AEROGEL (AEG) ======================*/
 
+/**
+ * @brief Definition type for the aerogel geometry.
+ * 
+ * Possible value: 1.
+ */
 Int_t    SpdCommonGeoMapper::theAegDefGeoType           = 1;        
+
+/**
+ * @brief Base material of the aerogel.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theAegBaseMaterial         = "air";  
+
+/**
+ * @brief Thickness of the aerogel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theAegThickness            = 30.0;   // cm
-Double_t SpdCommonGeoMapper::theAegSize                 = 84.7;   // cm
-Double_t SpdCommonGeoMapper::theAegWidth                = 78.7;   // cm 
-Double_t SpdCommonGeoMapper::theAegMinDist              = 153.6; //199.6; // cm
+
+/**
+ * @brief Size of the aerogel.
+ * 
+ * Specified in centimeters.
+ */
+Double_t SpdCommonGeoMapper::theAegSize                 = 50.0;   // cm
+
+/**
+ * @brief Width of the aerogel.
+ * 
+ * Specified in centimeters.
+ */
+Double_t SpdCommonGeoMapper::theAegWidth                = 50.0;   // cm
+
+/**
+ * @brief Minimum distance of the aerogel.
+ * 
+ * Specified in centimeters.
+ */
+Double_t SpdCommonGeoMapper::theAegMinDist              = 150.0;   // cm
     
 /*==================================================================*/
 /*= ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ =*/
@@ -107,144 +334,619 @@ Double_t SpdCommonGeoMapper::theAegMinDist              = 153.6; //199.6; // cm
 
 /*==================== BASKET (TOR.GEOM.) ==========================*/
 
+/**
+ * @brief Definition type for the toroidal basket geometry.
+ * 
+ * Possible value: 1.
+ */
 Int_t    SpdCommonGeoMapper::theTorBasketDefGeoType     = 1;    // : 1
+
+/**
+ * @brief Total length of the toroidal basket.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorBasketTotalLen       = 510;  // cm
 
+/**
+ * @brief Base material of the toroidal basket.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTorBasketBaseMaterial   = "air"; 
+
+/**
+ * @brief Material of the toroidal basket leaf.
+ * 
+ * Default: "bskt_steel_006".
+ */
 TString  SpdCommonGeoMapper::theTorBasketLeafMaterial   = "bskt_steel_006"; 
+
+/**
+ * @brief Material of the toroidal basket casing.
+ * 
+ * Default: "bskt_steel_003".
+ */
 TString  SpdCommonGeoMapper::theTorBasketCasingMaterial = "bskt_steel_003"; 
 
 /*==================== TOROIDAL MAGNET =============================*/
 
+/**
+ * @brief Definition type for the toroidal magnet geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theTorMagnetDefGeoType     = 1;    // : 1,2
+
+/**
+ * @brief Material of the toroidal magnet coil.
+ * 
+ * Default: "MCoilSubAir".
+ */
 TString  SpdCommonGeoMapper::theTorMagnetCoilMaterial   = "MCoilSubAir"; 
 
+/**
+ * @brief Distance to the first axis of the toroidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetDistToAxis1    = 13.;  // cm
+
+/**
+ * @brief Distance to the second axis of the toroidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetDistToAxis2    = 65.;  // cm
 
+/**
+ * @brief Length of the first section of the toroidal magnet (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetLen11          = 170.; // cm
+
+/**
+ * @brief Size of the first section of the toroidal magnet (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetSize11         = 120.; // cm
 
+/**
+ * @brief Length of the second section of the toroidal magnet (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetLen12          = 170.; // cm
+
+/**
+ * @brief Size of the second section of the toroidal magnet (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetSize12         = 167;  // cm
 
+/**
+ * @brief Length of the third section of the toroidal magnet (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetLen2           = 500.; // cm
+
+/**
+ * @brief Size of the third section of the toroidal magnet (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetSize2          = 120.; // cm
 
+/**
+ * @brief Length of the coil in the first section of the toroidal magnet (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetCoilLen11      = 160.; // cm
+
+/**
+ * @brief Length of the coil in the second section of the toroidal magnet (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetCoilLen12      = 160.; // cm
 
+/**
+ * @brief Length of the coil in the third section of the toroidal magnet (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetCoilLen2       = 500.; // cm
 
+/**
+ * @brief Thickness of the toroidal magnet coil.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetCoilThickness  = 4.;   // cm
+
+/**
+ * @brief Width of the toroidal magnet coil.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetCoilWidth      = 22.;  // cm
+
+/**
+ * @brief Radius of the toroidal magnet coil.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTorMagnetCoilRR         = 10.;  // cm
 
 /*=========== TSTB (TOROIDAL TRACKING SYSTEM BARREL) ===============*/
 
+/**
+ * @brief Definition type for the toroidal tracking system barrel geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theTsTBDefGeoType          = 1 ;    // : 1,2
 
+/**
+ * @brief Base material of the toroidal tracking system barrel.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTsTBBaseMaterial        = "air";
 
+/**
+ * @brief Length of the first section of the toroidal tracking system barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBLen11               = 170.; // cm 
+
+/**
+ * @brief Size of the first section of the toroidal tracking system barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBSize11              = 185.; // cm 
+
+/**
+ * @brief Width of the first section of the toroidal tracking system barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBWidth11             = 120.; // cm 
 
+/**
+ * @brief Length of the second section of the toroidal tracking system barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBLen12               = 170.; // cm 
+
+/**
+ * @brief Size of the second section of the toroidal tracking system barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBSize12              = 185.; // cm 
+
+/**
+ * @brief Width of the second section of the toroidal tracking system barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBWidth12             = 120.; // cm 
 
+/**
+ * @brief Length of the third section of the toroidal tracking system barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBLen2                = 510.; // cm 
+
+/**
+ * @brief Size of the third section of the toroidal tracking system barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBSize2               = 185.; // cm
+
+/**
+ * @brief Width of the third section of the toroidal tracking system barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBWidth2              = 120.; // cm
 
+/**
+ * @brief Overall length of the toroidal tracking system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBLen                 = 236.; // cm 
+
+/**
+ * @brief Overall size of the toroidal tracking system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBSize                =  85.; // cm
+
+/**
+ * @brief Overall width of the toroidal tracking system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTBWidth               =  58.; // cm
 
-Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset11        = 1;    //  (true, false)
-Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset12        = 1;    //  (true, false)
-Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset2         = 1;    //  (true, false)
-Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset          = 1;    //  (true, false)
+/**
+ * @brief Flag to create offset for the first section of the toroidal tracking system barrel (part 11).
+ * 
+ * Possible values: true, false.
+ */
+Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset11        = 1;    // (true, false)
+
+/**
+ * @brief Flag to create offset for the second section of the toroidal tracking system barrel (part 12).
+ * 
+ * Possible values: true, false.
+ */
+Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset12        = 1;    // (true, false)
+
+/**
+ * @brief Flag to create offset for the third section of the toroidal tracking system barrel (part 2).
+ * 
+ * Possible values: true, false.
+ */
+Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset2         = 1;    // (true, false)
+
+/**
+ * @brief Flag to create an overall offset for the toroidal tracking system barrel.
+ * 
+ * Possible values: true, false.
+ */
+Bool_t   SpdCommonGeoMapper::theTsTBMakeOffset          = 1;    // (true, false)
 
 /*========== TSTEC (TOROIDAL TRACKING SYSTEM ENDCAPS) =============*/
 
+/**
+ * @brief Definition type for the toroidal tracking system endcaps geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theTsTECDefGeoType         = 1; // : 1,2
 
+/**
+ * @brief Base material of the toroidal tracking system endcaps.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTsTECBaseMaterial       = "air";
+
+/**
+ * @brief Layer material of the toroidal tracking system endcaps.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTsTECLayerMaterial      = "air";
 
+/**
+ * @brief Minimum distance of the toroidal tracking system endcaps (part 1).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTECMinDist1           = 255.; // cm
+
+/**
+ * @brief Minimum distance of the toroidal tracking system endcaps (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTECMinDist2           = 255.; // cm
+
+/**
+ * @brief Minimum distance of the toroidal tracking system endcaps (part 3).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTECMinDist3           = 0.;   // cm
 
+/**
+ * @brief Size of the toroidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTECSize               = 340.; // cm
+
+/**
+ * @brief Width of the toroidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTECWidth              = 330.; // cm
 
+/**
+ * @brief Length of the first section of the toroidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsTECLength1            = 32.;  // cm
-Double_t SpdCommonGeoMapper::theTsTECLength2            = 32.;  // cm
-Double_t SpdCommonGeoMapper::theTsTECLength3            = 0.;  // cm
 
+/**
+ * @brief Length of the second section of the toroidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
+Double_t SpdCommonGeoMapper::theTsTECLength2            = 32.;  // cm
+
+/**
+ * @brief Length of the third section of the toroidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
+Double_t SpdCommonGeoMapper::theTsTECLength3            = 0.;  // cm
 /*===== ECALTB (TOROIDAL ELECTROMAGNETIC CALORIMETER BARREL) =======*/
 
+/**
+ * @brief Definition type for the toroidal electromagnetic calorimeter barrel geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theEcalTBDefGeoType        = 1;    // : 1,2
 
+/**
+ * @brief Base material of the toroidal electromagnetic calorimeter barrel.
+ * 
+ * Default: "ScPb_6535V".
+ */
 TString  SpdCommonGeoMapper::theEcalTBBaseMaterial      = "ScPb_6535V";
 
+/**
+ * @brief Length of the first section of the toroidal electromagnetic calorimeter barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBLen11             = 170.; // cm 
+
+/**
+ * @brief Size of the first section of the toroidal electromagnetic calorimeter barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBSize11            = 265.; // cm 
+
+/**
+ * @brief Width of the first section of the toroidal electromagnetic calorimeter barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBWidth11           = 60.;  // cm 
 
+/**
+ * @brief Length of the second section of the toroidal electromagnetic calorimeter barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBLen12             = 170.; // cm 
+
+/**
+ * @brief Size of the second section of the toroidal electromagnetic calorimeter barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBSize12            = 265.; // cm 
+
+/**
+ * @brief Width of the second section of the toroidal electromagnetic calorimeter barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBWidth12           = 60.;  // cm 
 
+/**
+ * @brief Length of the third section of the toroidal electromagnetic calorimeter barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBLen2              = 510.; // cm 
+
+/**
+ * @brief Size of the third section of the toroidal electromagnetic calorimeter barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBSize2             = 265.; // cm
+
+/**
+ * @brief Width of the third section of the toroidal electromagnetic calorimeter barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTBWidth2            = 60.;  // cm
 
 /*===== ECALTEC (TOROIDAL ELECTROMAGNETIC CALORIMETER ENDCAPS) =====*/
 
+/**
+ * @brief Definition type for the toroidal electromagnetic calorimeter endcaps geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theEcalTECDefGeoType       = 1; // : 1,2
 
+/**
+ * @brief Base material of the toroidal electromagnetic calorimeter endcaps.
+ * 
+ * Default: "ScPb_6535V".
+ */
 TString  SpdCommonGeoMapper::theEcalTECBaseMaterial     = "ScPb_6535V";
 
+/**
+ * @brief Minimum distance of the toroidal electromagnetic calorimeter endcaps (part 1).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTECMinDist1         = 292.; // cm
+
+/**
+ * @brief Minimum distance of the toroidal electromagnetic calorimeter endcaps (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTECMinDist2         = 292.; // cm
 
+/**
+ * @brief Size of the toroidal electromagnetic calorimeter endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTECSize             = 340.; // cm
+
+/**
+ * @brief Width of the toroidal electromagnetic calorimeter endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTECWidth            = 330.; // cm
+
+/**
+ * @brief Thickness of the toroidal electromagnetic calorimeter endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalTECThickness        = 58.;  // cm
 
 /*============ RSTB (TOROIDAL RANGE SYSTEM BARREL) =================*/
 
+/**
+ * @brief Definition type for the toroidal range system barrel geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theRsTBDefGeoType          = 1;    // : 1,2
 
+/**
+ * @brief Base material of the toroidal range system barrel.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theRsTBBaseMaterial        = "air";
 
+/**
+ * @brief Length of the first section of the toroidal range system barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBLen11               = 170.; // cm 
+
+/**
+ * @brief Size of the first section of the toroidal range system barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBSize11              = 340.; // cm 
+
+/**
+ * @brief Width of the first section of the toroidal range system barrel (part 11).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBWidth11             =  60.; // cm 
 
+/**
+ * @brief Length of the second section of the toroidal range system barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBLen12               = 170.; // cm 
+
+/**
+ * @brief Size of the second section of the toroidal range system barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBSize12              = 340.; // cm 
+
+/**
+ * @brief Width of the second section of the toroidal range system barrel (part 12).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBWidth12             =  60.; // cm 
 
+/**
+ * @brief Length of the third section of the toroidal range system barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBLen2                = 510.; // cm 
+
+/**
+ * @brief Size of the third section of the toroidal range system barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBSize2               = 340.; // cm
+
+/**
+ * @brief Width of the third section of the toroidal range system barrel (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTBWidth2              =  60.; // cm
 
 /*============ RSTEC (TOROIDAL RANGE SYSTEM ENDCAPS) ===============*/
 
+/**
+ * @brief Definition type for the toroidal range system endcaps geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theRsTECDefGeoType         = 1; // : 1,2
 
+/**
+ * @brief Base material of the toroidal range system endcaps.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theRsTECBaseMaterial       = "air";
 
+/**
+ * @brief Minimum distance of the toroidal range system endcaps (part 1).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTECMinDist1           = 355.; // cm
+
+/**
+ * @brief Minimum distance of the toroidal range system endcaps (part 2).
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTECMinDist2           = 355.; // cm
 
+/**
+ * @brief Size of the toroidal range system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTECSize               = 340.; // cm
+
+/**
+ * @brief Width of the toroidal range system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTECWidth              = 330.; // cm
+
+/**
+ * @brief Thickness of the toroidal range system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsTECThickness          = 60.;  // cm
 
 /*==================================================================*/
@@ -255,119 +957,494 @@ Double_t SpdCommonGeoMapper::theRsTECThickness          = 60.;  // cm
     
 /*==================== SOLENOIDAL MAGNET ===========================*/
 
+/**
+ * @brief Definition type for the solenoidal magnet geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theSolMagnetDefGeoType     = 1;    // : 1,2
+
+/**
+ * @brief Base material of the solenoidal magnet.
+ * 
+ * Default: "MCoilSubAir".
+ */
 TString  SpdCommonGeoMapper::theSolMagnetBaseMaterial   = "MCoilSubAir";
+
+/**
+ * @brief Cryogenic material of the solenoidal magnet.
+ * 
+ * Default: "steel".
+ */
 TString  SpdCommonGeoMapper::theSolMagnetCryoMaterial   = "steel";
 
+/**
+ * @brief Number of sections in the solenoidal magnet (first type).
+ * 
+ * Default: 1.
+ */
 Int_t    SpdCommonGeoMapper::theSolMagnetNSections1     = 1;  
+
+/**
+ * @brief Number of sections in the solenoidal magnet (second type).
+ * 
+ * Default: 3.
+ */
 Int_t    SpdCommonGeoMapper::theSolMagnetNSections2     = 3;  
 
+/**
+ * @brief Total length of the first section of the solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTotalLen1      = 510.; // cm
+
+/**
+ * @brief Total size of the first section of the solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTotalSize1     = 252.; // cm
+
+/**
+ * @brief Total width of the first section of the solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTotalWidth1    = 30.;  // cm
 
+/**
+ * @brief Length of the first solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetLen1           = 500.; // cm
+
+/**
+ * @brief Size of the first solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetSize1          = 248.; // cm
+
+/**
+ * @brief Width of the first solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetWidth1         = 22.;  // cm
 
+/**
+ * @brief Inner cryogenic width of the solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetInnerCryoW1    = 0.5;  // cm
+
+/**
+ * @brief Outer cryogenic width of the solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetOuterCryoW1    = 0.5;  // cm
+
+/**
+ * @brief End-face cryogenic width of the solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetEndfCryoW1     = 0.5;  // cm
 
+/**
+ * @brief Length of the second solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetLen2           = 170.; // cm
+
+/**
+ * @brief Size of the second solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetSize2          = 252.; // cm
+
+/**
+ * @brief Width of the second solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetWidth2         = 45.;  // cm
 
 /*==================== SOLENOIDAL MAGNET2 ===========================*/
 
+/**
+ * @brief Definition type for the second solenoidal magnet geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theSolMagnetTwoDefGeoType     = 1;    // : 1,2
+
+/**
+ * @brief Base material of the second solenoidal magnet.
+ * 
+ * Default: "MCoilSubAir2".
+ */
 TString  SpdCommonGeoMapper::theSolMagnetTwoBaseMaterial   = "MCoilSubAir2"; //density = 1.60
+
+/**
+ * @brief Cryogenic material of the second solenoidal magnet.
+ * 
+ * Default: "steel".
+ */
 TString  SpdCommonGeoMapper::theSolMagnetTwoCryoMaterial   = "steel";
 
+/**
+ * @brief Number of sections in the second solenoidal magnet.
+ * 
+ * Default: 10.
+ */
 Int_t    SpdCommonGeoMapper::theSolMagnetTwoNSections     = 10;
- 
+
+/**
+ * @brief Total length of the second solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoTotalLen      = 408.0; // cm //changed from 397.6
+
+/**
+ * @brief Total size of the second solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoTotalSize     = 200.4; // cm //changed from 188.4
+
+/**
+ * @brief Total width of the second solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoTotalWidth    = 27.;  // cm //changed from 23
 
+/**
+ * @brief Length of the second solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoLen           = 40.8; // cm //changed from 39.76
+
+/**
+ * @brief Size of the second solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoSize          = 200.4; // cm //changed from 188.4
+
+/**
+ * @brief Width of the second solenoidal magnet section.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoWidth         = 27.;  // cm //changed from 23
 
+/**
+ * @brief Inner cryogenic width of the second solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoInnerCryoW    = 0.5;  // cm
+
+/**
+ * @brief Outer cryogenic width of the second solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoOuterCryoW    = 0.5;  // cm
+
+/**
+ * @brief End-face cryogenic width of the second solenoidal magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theSolMagnetTwoEndfCryoW     = 0.5;  // cm
- 
 
 /*========== TSSB (SOLENOIDAL TRACKING SYSTEM BARREL) ==============*/
 
+/**
+ * @brief Definition type for the solenoidal tracking system barrel geometry.
+ * 
+ * Default: 1.
+ */
 Int_t    SpdCommonGeoMapper::theTsSBDefGeoType          = 1;  
 
+/**
+ * @brief Base material of the solenoidal tracking system barrel.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTsSBBaseMaterial        = "air";
 
+/**
+ * @brief Number of sections in the solenoidal tracking system barrel.
+ * 
+ * Default: 1.
+ */
 Int_t    SpdCommonGeoMapper::theTsSBNSections1          = 1;  
 
+/**
+ * @brief Length of the solenoidal tracking system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsSBLen                 = 510.; // cm 
+
+/**
+ * @brief Size of the solenoidal tracking system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsSBSize                = 112.; // cm 
+
+/**
+ * @brief Width of the solenoidal tracking system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsSBWidth               =  47.; // cm 
 
 /*========= TSSEC (SOLENOIDAL TRACKING SYSTEM ENDCAPS) =============*/
 
+/**
+ * @brief Definition type for the solenoidal tracking system endcaps geometry.
+ * 
+ * Possible values: 1.
+ */
 Int_t    SpdCommonGeoMapper::theTsSECDefGeoType         = 1; // : 1
 
+/**
+ * @brief Base material of the solenoidal tracking system endcaps.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theTsSECBaseMaterial       = "air";
 
+/**
+ * @brief Minimum distance of the solenoidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsSECMinDist            = 255.; // cm
+
+/**
+ * @brief Size of the solenoidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsSECSize               = 332.; // cm
+
+/**
+ * @brief Width of the solenoidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsSECWidth              = 322.; // cm
+
+/**
+ * @brief Thickness of the solenoidal tracking system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theTsSECThickness          = 32.;  // cm
 
 /*===== ECALSB (SOLENOIDAL ELECTROMAGNETIC CALORIMETER BARREL) =====*/
 
+/**
+ * @brief Definition type for the solenoidal electromagnetic calorimeter barrel geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theEcalSBDefGeoType        = 1; // : 1,2
 
+/**
+ * @brief Base material of the solenoidal electromagnetic calorimeter barrel.
+ * 
+ * Default: "ScPb_6535V".
+ */
 TString  SpdCommonGeoMapper::theEcalSBBaseMaterial      = "ScPb_6535V";
 
+/**
+ * @brief Number of sections in the solenoidal electromagnetic calorimeter barrel (first type).
+ * 
+ * Default: 1.
+ */
 Int_t    SpdCommonGeoMapper::theEcalSBNSections1        = 1;  
+
+/**
+ * @brief Number of sections in the solenoidal electromagnetic calorimeter barrel (second type).
+ * 
+ * Default: 3.
+ */
 Int_t    SpdCommonGeoMapper::theEcalSBNSections2        = 3;  
 
+/**
+ * @brief Length of the solenoidal electromagnetic calorimeter barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalSBLen               = 510.; // cm 
+
+/**
+ * @brief Size of the solenoidal electromagnetic calorimeter barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalSBSize              = 192.; // cm 
+
+/**
+ * @brief Width of the solenoidal electromagnetic calorimeter barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalSBWidth             = 60.;  // cm 
 
 /*==== ECALSEC (SOLENOIDAL ELECTROMAGNETIC CALORIMETER ENDCAPS) ====*/
 
+/**
+ * @brief Definition type for the solenoidal electromagnetic calorimeter endcaps geometry.
+ * 
+ * Possible values: 1.
+ */
 Int_t    SpdCommonGeoMapper::theEcalSECDefGeoType       = 1; // : 1
 
+/**
+ * @brief Base material of the solenoidal electromagnetic calorimeter endcaps.
+ * 
+ * Default: "ScPb_6535V".
+ */
 TString  SpdCommonGeoMapper::theEcalSECBaseMaterial     = "ScPb_6535V";
 
+/**
+ * @brief Minimum distance of the solenoidal electromagnetic calorimeter endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalSECMinDist          = 292.; // cm
+
+/**
+ * @brief Size of the solenoidal electromagnetic calorimeter endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalSECSize             = 332.; // cm
+
+/**
+ * @brief Width of the solenoidal electromagnetic calorimeter endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalSECWidth            = 322.; // cm
+
+/**
+ * @brief Thickness of the solenoidal electromagnetic calorimeter endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theEcalSECThickness        = 58.;  // cm
 
 /*============= RSSB (SOLENOIDAL RANGE SYSTEM BARREL) ==============*/
 
+/**
+ * @brief Definition type for the solenoidal range system barrel geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theRsSBDefGeoType          = 1; // : 1,2
 
+/**
+ * @brief Base material of the solenoidal range system barrel.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theRsSBBaseMaterial        = "air";
 
+/**
+ * @brief Number of sections in the solenoidal range system barrel (first type).
+ * 
+ * Default: 1.
+ */
 Int_t    SpdCommonGeoMapper::theRsSBNSections1          = 1;  
+
+/**
+ * @brief Number of sections in the solenoidal range system barrel (second type).
+ * 
+ * Default: 3.
+ */
 Int_t    SpdCommonGeoMapper::theRsSBNSections2          = 3;  
 
+/**
+ * @brief Length of the solenoidal range system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsSBLen                 = 510.; // cm 
+
+/**
+ * @brief Size of the solenoidal range system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsSBSize                = 332.; // cm 
+
+/**
+ * @brief Width of the solenoidal range system barrel.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsSBWidth               =  60.; // cm 
 
 /*============ RSSEC (SOLENOIDAL RANGE SYSTEM ENDCAPS) =============*/
 
+/**
+ * @brief Definition type for the solenoidal range system endcaps geometry.
+ * 
+ * Possible values: 1.
+ */
 Int_t    SpdCommonGeoMapper::theRsSECDefGeoType         = 1; // : 1
 
+/**
+ * @brief Base material of the solenoidal range system endcaps.
+ * 
+ * Default: "air".
+ */
 TString  SpdCommonGeoMapper::theRsSECBaseMaterial       = "air";
 
+/**
+ * @brief Minimum distance of the solenoidal range system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsSECMinDist            = 355.; // cm
+
+/**
+ * @brief Size of the solenoidal range system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsSECSize               = 332.; // cm
+
+/**
+ * @brief Width of the solenoidal range system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsSECWidth              = 322.; // cm
+
+/**
+ * @brief Thickness of the solenoidal range system endcaps.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theRsSECThickness          = 60.;  // cm
 
 /*==================================================================*/
@@ -378,27 +1455,116 @@ Double_t SpdCommonGeoMapper::theRsSECThickness          = 60.;  // cm
 
 /*========================= HYBRID MAGNET ==========================*/
 
+/**
+ * @brief Definition type for the hybrid magnet geometry.
+ * 
+ * Possible values: 1, 2.
+ */
 Int_t    SpdCommonGeoMapper::theHybMagnetDefGeoType     = 1;    // : 1,2
 
+/**
+ * @brief Coil material of the hybrid magnet.
+ * 
+ * Default: "MCoilSubAir".
+ */
 TString  SpdCommonGeoMapper::theHybMagnetCoilMaterial   = "MCoilSubAir"; 
 
+/**
+ * @brief Distance from the axis to the hybrid magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetDistToAxis     = 62.;  // cm
+
+/**
+ * @brief Distance from the axis to the first section of the hybrid magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetDistToAxis1    = 160.; // cm
+
+/**
+ * @brief Distance from the axis to the second section of the hybrid magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetDistToAxis2    = 260.; // cm
+
+/**
+ * @brief Distance from the axis to the central section of the hybrid magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetDistToAxisC    = 44. ; // cm 
 
+/**
+ * @brief Length of the hybrid magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetLen            = 236.; // cm
+
+/**
+ * @brief Size of the hybrid magnet.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetSize           = 114.; // cm
+
+/**
+ * @brief Length of the hybrid magnet coil.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetCoilLen        = 236.; // cm
+
+/**
+ * @brief Size of the hybrid magnet ring.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetRingSize       = 176.; // cm
 
+/**
+ * @brief Thickness of the hybrid magnet coil.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetCoilThickness  = 2.;   // cm
+
+/**
+ * @brief Width of the hybrid magnet coil.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetCoilWidth      = 20.;  // cm
+
+/**
+ * @brief Radius of the hybrid magnet coil.
+ * 
+ * Specified in centimeters.
+ */
 Double_t SpdCommonGeoMapper::theHybMagnetCoilRR         = 5.;   // cm
+
+/**
+ * @class SpdCommonGeoMapper
+ * @brief A singleton class for managing and defining geometries for the Spd system.
+ * 
+ * This class is responsible for setting up different geometry sets for various components
+ * of the Spd system. It ensures that the geometry configuration is valid and allows for
+ * defining and modifying specific geometrical configurations.
+ */
 
 ClassImp(SpdCommonGeoMapper)
 
 //_____________________________________________________________________________
+/**
+ * @brief Sets the number of geometry sectors.
+ * @param n The number of geometry sectors to set.
+ * 
+ * This method validates the input number of sectors to ensure it falls within the 
+ * acceptable range (3 to 12). If the input is invalid, it prints a warning message.
+ */
 void SpdCommonGeoMapper::SetNGeoSectors(Int_t n)
 {
   if (n < 3 || n > 12) {
@@ -410,6 +1576,12 @@ void SpdCommonGeoMapper::SetNGeoSectors(Int_t n)
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Default constructor for SpdCommonGeoMapper.
+ * 
+ * Initializes the singleton instance of SpdCommonGeoMapper. If an instance already exists,
+ * it prints an error message and aborts the initialization.
+ */
 SpdCommonGeoMapper::SpdCommonGeoMapper() 
 {
    if (fInstance) {
@@ -421,6 +1593,11 @@ SpdCommonGeoMapper::SpdCommonGeoMapper()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Destructor for SpdCommonGeoMapper.
+ * 
+ * Cleans up by deleting all passive modules and detectors that are currently in use.
+ */
 SpdCommonGeoMapper::~SpdCommonGeoMapper() 
 {
    if (!thePassives.empty()) {
@@ -435,6 +1612,13 @@ SpdCommonGeoMapper::~SpdCommonGeoMapper()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Provides access to the singleton instance of SpdCommonGeoMapper.
+ * @return Pointer to the singleton instance of SpdCommonGeoMapper.
+ * 
+ * If the instance does not exist, it creates a new one. This method ensures that there is only
+ * one instance of SpdCommonGeoMapper.
+ */
 SpdCommonGeoMapper* SpdCommonGeoMapper::Instance() 
 { 
    if (fInstance) return fInstance; 
@@ -443,6 +1627,12 @@ SpdCommonGeoMapper* SpdCommonGeoMapper::Instance()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Retrieves the master volume of the geometry.
+ * @return Pointer to the master TGeoVolume.
+ * 
+ * If the master volume is not yet set, it fetches it from the global geometry manager.
+ */
 TGeoVolume* SpdCommonGeoMapper::GetMasterVolume()
 {
    if (theMasterVolume) return theMasterVolume;
@@ -451,12 +1641,24 @@ TGeoVolume* SpdCommonGeoMapper::GetMasterVolume()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Gets the level of the master geometry.
+ * @return The master geometry level.
+ * 
+ * This method returns a fixed value indicating the level of the master geometry.
+ */
 Int_t SpdCommonGeoMapper::GetMasterGeoLevel()
 {
    return 1; 
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Gets the name of the master volume.
+ * @return Name of the master volume as a TString.
+ * 
+ * If the master volume is not set, it returns "cave" as a default.
+ */
 TString SpdCommonGeoMapper::GetMasterVolumeName()
 {
    TGeoVolume* masterv = GetMasterVolume();
@@ -465,6 +1667,13 @@ TString SpdCommonGeoMapper::GetMasterVolumeName()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Opens and reads the geometry file.
+ * @param media The name of the geometry media file to open.
+ * 
+ * This method attempts to locate and read the specified geometry file. It checks various paths,
+ * including absolute paths, environment variables, and default locations.
+ */
 void SpdCommonGeoMapper::OpenGeometry(TString media)
 {  
    if (media.IsWhitespace()) media = "media.geo";
@@ -515,6 +1724,10 @@ void SpdCommonGeoMapper::OpenGeometry(TString media)
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Gets the actual name of the media file currently being used.
+ * @return The name of the media file as a TString.
+ */
 TString SpdCommonGeoMapper::GetActualMediaFileName() const 
 {
    FairGeoLoader* loader = FairGeoLoader::Instance();
@@ -524,6 +1737,14 @@ TString SpdCommonGeoMapper::GetActualMediaFileName() const
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Defines the geometry set for the Tor system.
+ * @param type The type of geometry set to define.
+ * 
+ * This method sets up the Tor geometry based on the specified type. It also checks if the 
+ * geometry is locked for passives or detectors before making changes. It prints warnings for 
+ * unknown or invalid geometry types and sets default values as necessary.
+ */
 void SpdCommonGeoMapper::DefineTorGeometrySet(Int_t type)
 {
 //    if (type < 0) {
@@ -561,9 +1782,6 @@ void SpdCommonGeoMapper::DefineTorGeometrySet(Int_t type)
             }
        }
    }
-   
-   cout << "-I- <SpdCommonGeoMapper::DefineTorGeometrySet> " 
-        << " Build geometry set of type: " << type << endl;
         
    theSolMagnetDefGeoType    = 0;
    theTsSBDefGeoType         = 0;
