@@ -1,11 +1,11 @@
-// $Id$
-// Author: artur   2018/11/29
-
-
-//_____________________________________________________________________________
-//
-// SpdRunAna
-//_____________________________________________________________________________
+/**
+ * @file SpdRunAna.h
+ * @brief Header file for the SpdRunAna class.
+ *
+ * This file contains the class definition and member function declarations 
+ * for the SpdRunAna class, which is responsible for running and analyzing 
+ * simulations within the FAIRROOT framework.
+ */
 
 #include "SpdRunAna.h"
 
@@ -28,9 +28,22 @@
 using std::cout;
 using std::endl;
 
+/**
+ * @class SpdRunAna
+ * @brief Implements the simulation run analysis for the SPD.
+ *
+ * The SpdRunAna class is derived from FairRunAna and provides functionality
+ * to initialize, load, save, and manage simulation parameters. It also 
+ * executes tasks related to event processing and data management.
+ */
 ClassImp(SpdRunAna)
 
 //_____________________________________________________________________________
+/**
+ * @brief Default constructor for SpdRunAna.
+ *
+ * Initializes member variables and adds particles to the database.
+ */
 SpdRunAna::SpdRunAna():FairRunAna(),fParSet(0),
 fKeepParameters(true),
 fLoadGeoParSet(true),fLoadBaseParSet(true),
@@ -43,12 +56,22 @@ fIsParsSaved(false)
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Destructor for SpdRunAna.
+ *
+ * Deletes the parameter set and performs necessary cleanup.
+ */
 SpdRunAna::~SpdRunAna() 
 {
     DeleteParSet();
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Deletes the parameter set.
+ *
+ * Frees the memory allocated for the parameter set.
+ */
 void SpdRunAna::DeleteParSet()
 {
     if (fParSet) {
@@ -58,6 +81,11 @@ void SpdRunAna::DeleteParSet()
 }
  
 //_____________________________________________________________________________
+/**
+ * @brief Retrieves the parameter set assembly.
+ *
+ * @return Pointer to SpdSetParSet containing simulation parameters.
+ */
 SpdSetParSet* SpdRunAna::GetParSetAssembly()  
 { 
     if (fParSet) return fParSet; 
@@ -66,6 +94,12 @@ SpdSetParSet* SpdRunAna::GetParSetAssembly()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Retrieves the parameters for a given name.
+ *
+ * @param pars_name The name of the parameters to retrieve.
+ * @return Pointer to FairParGenericSet containing the requested parameters.
+ */
 FairParGenericSet* SpdRunAna::GetParameters(TString pars_name)
 {
     FairParGenericSet* parameters = 0;
@@ -89,6 +123,11 @@ FairParGenericSet* SpdRunAna::GetParameters(TString pars_name)
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Initializes the run analysis.
+ *
+ * Sets up particles, loads parameters, and initializes the task execution.
+ */
 void SpdRunAna::Initialize()
 {
     cout << "-I- <SpdRunAna::Initialize>(1) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " << endl; 
@@ -105,6 +144,11 @@ void SpdRunAna::Initialize()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Loads simulation parameters.
+ *
+ * Attempts to load base parameters and geometry from the runtime database or file source.
+ */
 void SpdRunAna::LoadParameters()
 {
     // try loading base parameters & geometry from Runtime Database (from separate file)
@@ -138,6 +182,11 @@ void SpdRunAna::LoadParameters()
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Saves simulation parameters.
+ *
+ * Writes the parameters to a root file sink if they haven't been saved yet.
+ */
 void SpdRunAna::SaveParameters()
 {
     if (fIsParsSaved) return;
@@ -183,12 +232,24 @@ void SpdRunAna::SaveParameters()
 }
   
 //_____________________________________________________________________________
+/**
+ * @brief Finalizes the task.
+ *
+ * Prints a message indicating the completion of the task.
+ */
 void SpdRunAna::FinishTask()
 {
     cout << "\n-I- <SpdRunAna::FinishTask> " << endl;    
 }
 
 //_____________________________________________________________________________
+/**
+ * @brief Processes a single entry in the run.
+ *
+ * @param entry The index of the entry to process.
+ *
+ * Reads the event data for the specified entry and reinitializes the task if the run ID changes.
+ */
 void SpdRunAna::RunEntry(Int_t entry)
 {
    fRootManager->ReadEvent(entry);
@@ -207,8 +268,3 @@ void SpdRunAna::RunEntry(Int_t entry)
    fRootManager->StoreWriteoutBufferData(fRootManager->GetEventTime());
    fTask->ExecuteTask("");
 }
-
-
-
-
-
