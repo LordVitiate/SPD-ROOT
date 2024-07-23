@@ -1,0 +1,24 @@
+Based of the code and emails by Andrey Maltsev.
+
+Run reconstruction testECAL.sh, the recommended number of events is 20'000, but for some checks
+the ten times larger statistics is required.
+
+Figures for photon reconstruction are in CheckReconstruction. The relevant ones are:
+  * "final/h_ediff_etrue_barrel" and "final/h_ediff_etrue_endcap" represent the difference between
+    the true and reconstructed energies; 1-2% difference is Ok;
+  * "final/h_ereco_MCenergy_energyDisc_PE_graph" - energy resolution for all angles together;
+  * "final/h_ereco_MCenergy_energyDisc_PE_angleBin0_graph_combined" - energy resolution as a function
+    of angle, requires 200K+ events;
+  * "final/h_phidiff_MCenergy_energyDisc_graph" - R*phi resolution, should decrease with increase of energy;
+  * "endcap0_xy_cells" and "endcap1_xy_cells" - fired cells, controll ECal shape an the whole size;
+  * "h_allpart_z" - Z-coordinate of reconstructed particles, check symmetry;
+  * "hEndcapID" - endcap ID, check that both of them work;
+  * "h_xdiff_xtrue" and "h_ydiff_ytrue" - coordinate resolution for endcaps, check absence of notable bias.
+
+Figures for pion reconstruction are in CheckReconstructionPi0. The relevant ones are:
+  * "h_mgg_doublebarrel", "h_mgg_doublebarrel_100mevMin", "h_mgg_doublebarrel_400mevMin" - pi0 mass when
+    both photons hit barrel, the most important is h_mgg_doublebarrel_400mevMin;
+  * "h_mgg_doubleendcap", "h_mgg_doubleendcap_100mevMin", "h_mgg_doubleendcap_400mevMin" - the same for
+    endcaps;
+  * "h_pi0reconstruction_vs_thetaPi0_passed_ratio" - the reconstruction efficiency as a function of
+    the polar angle, should be reasonably flat.

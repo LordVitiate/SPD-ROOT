@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# This script is introduced for convinient invocation of shell routines inside
+# a containerized environment. Just type your command after the script name. All
+# its arguments will be forwarded into the "docker run" invocation.
+# Usage exampes:
+#   1) Run ROOT shipped within the FairSoft:
+#       $ ./do.run root
+#   2) Echo environment variable (note escaping the '$' sign):
+#       $ ./do.run echo \$SIMPATH
+#   3) Getting into Bourne Shell within the running container:
+#       $ ./do.run /bin/bash
+# Current version of the script may contain drawbacks caused by the
+# SELinux environment. See NOTE #?-selinux comments for details.
+
+CURR_DIR=$(realpath "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )")
+
+# NOTE: #1-selinux generating a mock .Xauthority file may be not necessary for
+# non-selinux systems.
+if [ ! -f /tmp/.X11-unix/.docker.Xauthority ] ; then
+    touch /tmp/.X11-unix/.docker.Xauthority
+    xauth nlist :0.0 | sed -e 's/^..../ffff/' | xauth -f /tmp/.X11-unix/.docker.Xauthority nmerge -
+fi
+
+# NOTE #2-selinux: the "--security-opt label=type:container_runtime_t" is
+# apparently required for SELinux environment only, granting access to real
+# X11 socket. For more details, see: https://unix.stackexchange.com/a/387744
+# NOTE #3-selinux: in the "-v ...:/var/src:z" volume mounting arg, the ":z" is required
+# only for SELinux systems, allowing container access the mounted directory.
+function in_container() {
+    docker run -ti \
+        --security-opt label=type:container_runtime_t \
+        -v $CURR_DIR/..:/var/src:z \
+        -e DISPLAY=unix$DISPLAY \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -e XAUTHORITY=/tmp/.X11-unix/.docker.Xauthority \
+        crankone/fairroot:17.03a \
+        docker/env.run $@
+}
+
+in_container $@

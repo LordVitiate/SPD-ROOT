@@ -1,0 +1,29 @@
+#/********************************************************************************
+# *    Copyright (C) 2014 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH    *
+# *                                                                              *
+# *              This software is distributed under the terms of the             * 
+# *         GNU Lesser General Public Licence version 3 (LGPL) version 3,        *  
+# *                  copied verbatim in the file "LICENSE"                       *
+# ********************************************************************************/
+#
+# Geant4 configuration macro for Example02
+# (called from Root macro Config.C)
+
+#/control/manual 
+#/control/createHTML 
+
+/mcVerbose/all 0
+#/run/verbose 0
+#/event/verbose 0
+#/tracking/verbose 0
+
+/run/particle/applyCuts
+
+/mcPhysics/rangeCutForGamma    0.1 mm    
+/mcPhysics/rangeCutForElectron 0.1 mm
+/mcPhysics/rangeCutForPositron 0.1 mm
+/mcPhysics/rangeCuts 0.1 mm
+
+#/mcRegions/print 1
+
+

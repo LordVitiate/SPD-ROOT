@@ -1,0 +1,10 @@
+4.0.0 08.09.2020
+* Current «CDR-like» SPD geometry 
+* Full set of detectors except TOF, ZDC, BBC 
+* New quasi-solenoid magnetic field
+* Very flexible and easy to change
+* ECAL barrel and endcaps — geometry and simulation
+* RS barrel and endcaps — geometry and simulation
+* Secondary vertex reconstruction
+* Event data model refined, but not final yet
+* New building and installation prcedure (make install)

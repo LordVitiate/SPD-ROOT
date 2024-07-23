@@ -1,0 +1,6 @@
+#include "SpdIdealDataInfo.h"
+#include "SpdIdealHit.h"
+#include "SpdIdealSpacepointHit.h"
+#include "SpdIdealTrackColl.h"
+#include "SpdIdealTrack.h"
+#include "SpdIdealWirepointHit.h"
